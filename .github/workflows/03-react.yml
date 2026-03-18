@@ -1,0 +1,39 @@
+name: '03-react'
+run-name: 'Node install & react app host & verification'
+on:
+  workflow_dispatch:
+jobs:
+  build_and_run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: 'Install tree'
+        run: |
+          echo 'Install tree silently...'
+          sudo apt-get -qqy install tree
+          echo 'Finished installing tree'
+      - name: 'Print directories'
+        run: tree .
+      - uses: actions/setup-node@v6
+        with:
+          node-version: latest
+      - name: 'Create&Run react application'
+        run: |
+          npx create-react-app@latest my-app
+          cd my-app
+          npm ci && npm start &
+      - name: 'Print directories'
+        working-directory: my-app
+        run: tree .
+      - name: 'Verify react app is running'
+        run: |
+          npx wait-on http://localhost:3000
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000)
+          if [ "$HTTP_STATUS" -eq 200 ]; then
+            echo "React app is running! (HTTP $HTTP_STATUS)"
+          else
+            echo "React app is NOT running! (HTTP $HTTP_STATUS)"
+            exit 1
+          fi
+        working-directory: my-app

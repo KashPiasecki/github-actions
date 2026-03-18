@@ -1,4 +1,5 @@
 name: '01-first-workflow'
+run-name: 'First workflow'
 on:
   workflow_dispatch:
   # schedule:
