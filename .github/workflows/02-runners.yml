@@ -1,0 +1,13 @@
+name: '02-runners'
+on:
+  workflow_dispatch:
+jobs:
+  echo-runner:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: ${{ matrix.os}}-runner
+        run: echo 'I am running on ${{ runner.os }} operating system!'
